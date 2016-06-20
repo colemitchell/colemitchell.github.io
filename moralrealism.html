@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Online guide to the moral realism debate (Cole Mitchell)</title>
+<title>Online guide to the moral realism debate</title>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.min.js"></script>
 
 <style>
 
-/* -------------------------MAIN-MENU----------------------- */
+/* -------------------------TOP-MENU----------------------- */
 #topmenu {
   margin: 0;
   padding: 0;
@@ -88,6 +88,19 @@
 
 /* ----------------------------BOX-------------------------- */
 
+.greetbox {
+  clear: left;
+  float: left;
+  border: 2px solid black;
+  margin: 30px 0px 0px 60px;
+  min-height: 450px;
+  padding: 20px 40px 20px 80px;
+  text-align: justify;
+  width: 600px;
+  display: none;}
+.greetbox ul li {
+  margin-top: .5em;}
+
 .mainbox {
   clear: left;
   float: left;
@@ -100,6 +113,7 @@
   display: none;}
 .mainbox ul li {
   margin-top: .5em;}
+
 </style>
 
 </head>
@@ -107,6 +121,7 @@
 
 <script>
 $(function() {
+    $('.greetbox').show();
     $('.sidemenu').hide();
     var selected;
     $('#topmenu li a').click(function(e) {
@@ -117,7 +132,10 @@ $(function() {
         var tabContent = this.hash;
         var tab = $(tabContent).show();
         tab.siblings('.mainbox').hide();
-        selected = tab.next().show();
+        tab.siblings('.greetbox').hide();
+        if(!tab.next().hasClass('mainbox')) {
+            selected = tab.next().show();   
+        }
     });
     $('.sidemenu a').click(function(e) {
         e.preventDefault();
@@ -174,7 +192,7 @@ $(function() {
 	<li><a href="#qua1">Quasi-Realist Expressivism</a></li>
 	</ul>
     </li>
-    <li><a href="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a></li>
+    <li><a href="#greet">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a></li>
     <li>
     <a href="">Special Topics</a>
 	<ul>
@@ -192,6 +210,11 @@ $(function() {
 	</ul>
     </li>
   </ul>
+</div>
+
+<div id="greet" class="greetbox">
+<center><font size="4">Online guide to the moral realism debate</font></center><br>
+This guide is very incomplete, in part because it is something of a glorified bibliography. Click above for information on different positions and topics (and the people who have discussed them).
 </div>
 
 <!==========================OPTIONS===========================>
