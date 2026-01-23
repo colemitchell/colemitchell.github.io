@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Early Modern Philosophers Lifespan and Publication Timeline</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        .timeline-container {
+            position: relative;
+            width: 1800px;
+            height: 800px;
+            background-color: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            overflow-x: auto;
+            padding: 20px;
+        }
+        .timeline {
+            position: relative;
+            height: 100%;
+            width: 2000px;
+            background: repeating-linear-gradient(
+                to right,
+                rgba(0, 0, 0, 0.1) 0px,
+                rgba(0, 0, 0, 0.1) 1px,
+                transparent 1px,
+                transparent calc((100% / (1810 - 1550)) * 25)
+            );
+        }
+        .year-label {
+            position: absolute;
+            top: -20px;
+            transform: translateX(-50%);
+            font-size: 12px;
+            color: #666;
+        }
+        .lifespan-bar {
+            position: absolute;
+            height: 30px;
+            opacity: 0.9;
+            display: flex;
+            text-color: black;
+            align-items: center;
+            padding-left: 10px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        .lifespan-bar:hover {
+            opacity: 0.5;
+        }
+        .lifespan-bar .philosopher-name {
+            font-weight: bold;
+            margin-right: 10px;
+            white-space: nowrap;
+            color: black;
+        }
+        .publication-marker {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 5px;
+            background-color: #e74c3c;
+            transform: translateX(-50%);
+            z-index: 10;
+            cursor: pointer;
+        }
+        .extended-publication {
+            transform: none;
+            width: auto;
+            border-radius: 5px;
+        }
+        .publication-label {
+            position: absolute;
+            top: -15px;
+            left: 100%;
+            white-space: nowrap;
+            font-size: 10px;
+            background-color: rgba(0,0,0,0.7);
+            color: white;
+            padding: 2px 5px;
+            border-radius: 3px;
+            margin-left: 5px;
+            transition: opacity 0.3s ease;
+        }
+        .hidden {
+            opacity: 0;
+            pointer-events: none;
+            display: none;
+        }
+        .controls {
+            margin-bottom: 20px;
+        }
+        .toggle-button {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        .toggle-button:hover {
+            background-color: #45a049;
+        }
+        .toggle-button.active {
+            background-color: #45a049;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+    <h1>Early Modern Philosophers Lifespan and Publication Timeline</h1>
+    <div class="controls">
+        <button id="togglePublications" class="toggle-button">Hide Publication Names</button>
+        <button id="showAll" class="toggle-button active">Show All</button>
+        <button id="toggleBig7" class="toggle-button">Big 7 only</button>
+        <button id="toggleEngLang" class="toggle-button">English-language only</button>
+        <button id="toggleNotPrecursor" class="toggle-button">Hide precursors</button>
+        <button id="toggleScience" class="toggle-button">Science only</button>
+    </div>
+    <div class="timeline-container">
+        <div class="timeline" id="timeline">
+            <!-- Lifespan bars and publication markers will be dynamically added here -->
+        </div>
+    </div>
+
+    <script>
+        const philosophers = [
+            {
+                name: "Francisco Su&aacute;rez",
+                birth: 1548,
+                death: 1617,
+                color: "rgba(52, 152, 219, .3)",
+                groups: [],
+                works: [
+                    { title: "Metaphysical Disputations", year: 1597 },
+                ]
+            },
+            {
+                name: "Francis Bacon",
+                birth: 1561,
+                death: 1626,
+                color: "rgba(52, 152, 219, .3)",
+                groups: ["EngLang", "Science"],
+                works: [
+                    { title: "The Advancement of Learning", year: 1605 },
+                    { title: "The Great Instauration", year: 1620 },
+                    { title: "De Dignitate et Augmentis Scientiarum", year: 1623 }
+                ]
+            },
+            {
+                name: "Galileo Galilei",
+                birth: 1564,
+                death: 1642,
+                color: "rgba(52, 152, 219, .3)",
+                groups: ["EngLang", "Science"],
+                works: [
+                    { title: "Dialogue Concerning the Two Chief World Systems", year: 1632 },
+                    { title: "[house arrest]", year: 1633, endYear: 1642, extended: true }
+                ]
+            },
+            {
+                name: "Ren&eacute; Descartes",
+                birth: 1596,
+                death: 1650,
+                color: "rgba(52, 152, 219, .3)",
+                groups: ["Big7", "NotPrecursor", "Science"],
+                works: [
+                    { title: "Discourse on Method", year: 1637 },
+                    { title: "Meditations on First Philosophy", year: 1641 },
+                    { title: "Principles of Philosophy", year: 1644 },
+                    { title: "Passions of the Soul", year: 1649 }
+                ]
+            },
+            {
+                name: "Thomas Hobbes",
+                birth: 1588,    
+                death: 1679,
+                color: "rgba(231, 76, 60, .3)",
+                groups: ["EngLang", "NotPrecursor"],
+                works: [
+                    { title: "De Cive", year: 1642 },
+                    { title: "Leviathan", year: 1651 },
+                    { title: "De Corpore", year: 1655 },
+                    { title: "De Homine", year: 1658 }
+                ]
+            },
+            {
+                name: "Antoine Arnauld",
+                birth: 1612,
+                death: 1694,
+                color: "rgba(46, 204, 113, .3)",
+                groups: ["NotPrecursor"],
+                works: [
+                    { title: "Port-Royal Logic", year: 1662, endYear: 1683, extended: true },
+                    { title: "On True and False Ideas", year: 1683 }
+                ]
+            },
+            {
+                name: "Elisabeth of Bohemia",
+                birth: 1618,
+                death: 1680,
+                color: "rgba(46, 204, 113, .3)",
+                groups: ["NotPrecursor"],
+                works: [
+                    { 
+                        title: "Correspondence with Descartes",
+                        year: 1643,
+                        endYear: 1650,
+                        extended: true
+                    }
+                ]
+            },
+            {
+                name: "Margaret Cavendish",
+                birth: 1623,
+                death: 1673,
+                color: "rgba(46, 204, 113, .3)",
+                groups: ["EngLang", "NotPrecursor"],
+                works: [
+                    { title: "Philosophical Letters", year: 1664 },
+                    { title: "Observations upon Experimental Philosophy", year: 1666 },
+                    { title: "Grounds of Natural Philosophy", year: 1668 }
+                ]
+            },
+            {
+                name: "Henry More",
+                birth: 1614,
+                death: 1687,
+                color: "rgba(46, 204, 113, .3)",
+                groups: ["EngLang", "NotPrecursor"],
+                works: [
+                    { title: "Antidote Against Atheism", year: 1655 },
+                    { title: "Immortality of the Soul", year: 1659 },
+                    { title: "Enchiridion Metaphysicum", year: 1671 }
+                ]
+            },
+            {
+                name: "Ralph Cudworth",
+                birth: 1617,
+                death: 1688,
+                color: "rgba(26, 188, 156, .3)",
+                groups: ["EngLang", "NotPrecursor"],
+                works: [
+                    { title: "The True Intellectual System of the Universe", year: 1678 }
+                ]
+            },
+            {
+                name: "Anne Conway",
+                birth: 1631,
+                death: 1679,
+                color: "rgba(26, 188, 156, .3)",
+                groups: ["EngLang", "NotPrecursor"],
+                works: [
+                    { title: "Principles of the Most Ancient and Modern Philosophy", year: 1690 }
+                ]
+            },
+            {
+                name: "Baruch Spinoza",
+                birth: 1632,
+                death: 1677,
+                color: "rgba(46, 204, 113, .3)",
+                groups: ["Big7", "NotPrecursor"],
+                works: [
+                    { title: "Tractatus Theologico-Politicus", year: 1670 },
+                    { title: "Ethics", year: 1677 }
+                ]
+            },
+            {
+                name: "Nicolas Malebranche",
+                birth: 1638,
+                death: 1715,
+                color: "rgba(155, 89, 182, .3)",
+                groups: ["NotPrecursor"],
+                works: [
+                    { title: "Search after Truth", year: 1675 }
+                ]
+            },
+            {
+                name: "John Locke",
+                birth: 1632,
+                death: 1704,
+                color: "rgba(243, 156, 18, .3)",
+                groups: ["EngLang", "Big7", "NotPrecursor"],
+                works: [
+                    { title: "[exile in Holland", year: 1683, endYear: 1689, extended: true },
+                    { title: "An Essay Concerning Human Understanding", year: 1689 },
+                    { title: "A Letter Concerning Toleration", year: 1689 },
+                    { title: "Two Treatises of Government", year: 1689 }
+                ]
+            },
+            {
+                name: "Isaac Newton",
+                birth: 1642,
+                death: 1727,
+                color: "rgba(243, 156, 18, .3)",
+                groups: ["EngLang", "NotPrecursor", "Science"],
+                works: [
+                    { title: "Principia Mathematica", year: 1687 },
+                    { title: "Opticks", year: 1704 }
+                ]
+            },
+            {
+                name: "Gottfried Leibniz",
+                birth: 1646,
+                death: 1716,
+                color: "rgba(52, 73, 94, .3)",
+                groups: ["Big7", "NotPrecursor", "Science"],
+                works: [
+                    { title: "Discourse on Metaphysics", year: 1686 },
+                    { title: "Theodicy", year: 1710 },
+                    { title: "Monadology", year: 1714 }
+                ]
+            },
+            {
+                name: "Pierre Bayle",
+                birth: 1647,
+                death: 1706,
+                color: "rgba(52, 73, 94, .3)",
+                groups: ["NotPrecursor"],
+                works: [
+                    { title: "Various Thoughts on the Comet", year: 1683 },
+                    { title: "Philosophical Commentary", year: 1686, endYear: 1688, extended: true },
+                    { title: "Dictionary Historical and Critical", year: 1697, endYear: 1702, extended: true }
+                ]
+            },
+            {
+                name: "Samuel Clarke",
+                birth: 1675,
+                death: 1729,
+                color: "rgba(211, 84, 0, .3)",
+                groups: ["EngLang", "NotPrecursor"],
+                works: [
+                    { title: "1st Boyle Lecture", year: 1704 },
+                    { title: "2nd Boyle Lecture", year: 1705 },
+                    { title: "Correspondence with Leibniz", year: 1715, endYear: 1717, extended: true }
+                ]
+            },
+            {
+                name: "Christian Wolff",
+                birth: 1675,
+                death: 1729,
+                color: "rgba(211, 84, 0, .3)",
+                groups: ["NotPrecursor"],
+                works: [
+                    { title: "German Logic", year: 1712 },
+                    { title: "German Metaphysics", year: 1719 },
+                    { title: "Ontology", year: 1730 }
+                ]
+            },
+            {
+                name: "George Berkeley",
+                birth: 1685,
+                death: 1753,
+                color: "rgba(211, 84, 0, .3)",
+                groups: ["EngLang", "Big7", "NotPrecursor"],
+                works: [
+                    { title: "A Treatise Concerning the Principles of Human Knowledge", year: 1710 },
+                    { title: "Three Dialogues Between Hylas and Philonous", year: 1713 }
+                ]
+            },
+            {
+                name: "David Hume",
+                birth: 1711,
+                death: 1776,
+                color: "rgba(142, 68, 173, .3)",
+                groups: ["EngLang", "Big7", "NotPrecursor"],
+                works: [
+                    { title: "A Treatise of Human Nature", year: 1739, endYear: 1740, extended: true },
+                    { title: "1st Enquiry", year: 1748 },
+                    { title: "2nd Enquiry", year: 1751 },
+                    { title: "History of England", year: 1754, endYear: 1762, extended: true },
+                    { title: "Dialogues concerning Natural Religion", year: 1779 }
+                ]
+            },
+            {
+                name: "Immanuel Kant",
+                birth: 1724,
+                death: 1804,
+                color: "rgba(22, 160, 133, .3)",
+                groups: ["Big7", "NotPrecursor"],
+                works: [
+                    { title: "Critique of Pure Reason", year: 1781 },
+                    { title: "Prolegomena", year: 1783 },
+                    { title: "Groundwork of the Metaphysics of Morals", year: 1785 },
+                    { title: "Critique of Practical Reason", year: 1788 },
+                    { title: "Critique of Judgment", year: 1790 },
+                    { title: "Metaphysics of Morals", year: 1797 }
+                ]
+            }
+        ];
+
+        // Define philosopher groups
+        const philosopherGroups = {
+            Big7: ["Ren&eacute; Descartes", "Baruch Spinoza", "Gottfried Leibniz", "John Locke", "George Berkeley", "David Hume", "Immanuel Kant"],
+            EngLang: ["Francis Bacon", "Thomas Hobbes", "Henry More", "Ralph Cudworth", "Margaret Cavendish", "Anne Conway",
+                      "John Locke", "Isaac Newton", "Samuel Clarke", "George Berkeley", "David Hume"],
+            NotPrecursor: ["Ren&eacute; Descartes", "Thomas Hobbes", "Antoine Arnauld", "Elisabeth of Bohemia", "Margaret Cavendish",
+                           "Henry More", "Ralph Cudworth", "Anne Conway", "Baruch Spinoza", "Nicolas Malebranche", 
+                           "John Locke", "Isaac Newton", "Gottfried Leibniz", "George Berkeley", "David Hume"],
+            Science: ["Francis Bacon", "Galileo Galilei", "Ren&eacute; Descartes", "Isaac Newton"]
+        };
+
+        const timeline = document.getElementById('timeline');
+        const startYear = 1550;
+        const endYear = 1810;
+        const timelineWidth = 2000;
+
+        function calculatePosition(year) {
+            return ((year - startYear) / (endYear - startYear)) * timelineWidth;
+        }
+
+        function calculateWidth(birth, death) {
+            return ((death - birth) / (endYear - startYear)) * timelineWidth;
+        }
+
+        let verticalLevels = 0;
+
+
+function recalculatePositions() {
+    const visibleBars = Array.from(document.querySelectorAll('.lifespan-bar:not(.hidden)'));
+    let maxLevel = 0;
+    
+    visibleBars.forEach((bar) => {
+        // Reset position to 0 before recalculating
+        bar.style.top = '0px';
+        let level = 0;
+        
+        // Check for overlap with all previous visible bars
+        let overlap = true;
+        while (overlap) {
+            overlap = false;
+            for (let i = 0; i < visibleBars.indexOf(bar); i++) {
+                const otherBar = visibleBars[i];
+                if (isOverlappingBars(bar, otherBar, level, parseInt(otherBar.style.top) / 100)) {
+                    overlap = true;
+                    level++;
+                    break;
+                }
+            }
+        }
+        
+        bar.style.top = `${level * 100}px`;
+        maxLevel = Math.max(maxLevel, level);
+        
+        // Adjust associated publication markers
+        const philosopher = bar.getAttribute('data-name');
+        const publications = document.querySelectorAll(`.publication-marker[data-philosopher="${philosopher}"]:not(.hidden)`);
+        publications.forEach((pub, index) => {
+            pub.style.top = `${level * 100 + 15 + (index * 15)}px`;
+        });
+    });
+    
+    // Adjust container height
+    timeline.parentElement.style.height = `${(maxLevel + 1) * 100 + 200}px`;
+}
+
+function isOverlappingBars(bar1, bar2, level1, level2) {
+    if (level1 !== level2) return false;
+    
+    const left1 = parseFloat(bar1.style.left);
+    const right1 = left1 + parseFloat(bar1.style.width);
+    const left2 = parseFloat(bar2.style.left);
+    const right2 = left2 + parseFloat(bar2.style.width);
+    	
+    return !(right1 < left2 - 100 || left1 > right2 + 100);
+}
+
+
+        // Function to show/hide philosophers based on group
+function togglePhilosopherGroup(groupName) {
+    const philosophersToShow = philosopherGroups[groupName] || [];
+    
+    // Hide all philosophers first
+    document.querySelectorAll('.lifespan-bar').forEach(bar => {
+        bar.classList.add('hidden');
+    });
+    document.querySelectorAll('.publication-marker').forEach(marker => {
+        marker.classList.add('hidden');
+    });
+
+    // Show only philosophers in the selected group
+    philosophersToShow.forEach(philosopherName => {
+        const philosopherBar = document.querySelector(`.lifespan-bar[data-name="${philosopherName}"]`);
+        if (philosopherBar) {
+            philosopherBar.classList.remove('hidden');
+            // Show associated publications
+            document.querySelectorAll(`.publication-marker[data-philosopher="${philosopherName}"]`).forEach(marker => {
+                marker.classList.remove('hidden');
+            });
+        }
+    });
+    
+    recalculatePositions();
+}
+
+        // Function to show all philosophers
+function showAllPhilosophers() {
+    document.querySelectorAll('.lifespan-bar, .publication-marker').forEach(element => {
+        element.classList.remove('hidden');
+    });
+    recalculatePositions();
+}
+        
+        // Add year labels
+        for (let year = 1550; year <= 1800; year += 25) {
+            if (year >= startYear && year <= endYear) {
+                const label = document.createElement('div');
+                label.className = 'year-label';
+                label.textContent = year;
+                label.style.left = `${calculatePosition(year)}px`;
+                timeline.appendChild(label);
+            }
+        }
+
+        // Create and render philosophers
+// Modify the publication marker creation section within the philosophers.forEach loop
+philosophers.forEach((philosopher, index) => {
+    const bar = document.createElement('div');
+    bar.className = 'lifespan-bar';
+    bar.setAttribute('data-name', philosopher.name);
+    
+    bar.style.left = `${calculatePosition(philosopher.birth)}px`;
+    bar.style.width = `${calculateWidth(philosopher.birth, philosopher.death)}px`;
+    bar.style.backgroundColor = philosopher.color;
+    
+    let level = 0;
+    while (isOverlapping(bar, level)) {
+        level++;
+    }
+    bar.style.top = `${level * 100}px`;
+    verticalLevels = Math.max(verticalLevels, level + 1);
+
+    bar.innerHTML = `<span class="philosopher-name">${philosopher.name}</span>`;
+
+    philosopher.works.forEach((work, workIndex) => {
+        const publicationMarker = document.createElement('div');
+        publicationMarker.className = 'publication-marker';
+        publicationMarker.setAttribute('data-philosopher', philosopher.name);
+        
+        if (work.extended) {
+            publicationMarker.classList.add('extended-publication');
+            const startPos = calculatePosition(work.year);
+            const endPos = calculatePosition(work.endYear);
+            publicationMarker.style.left = `${startPos}px`;
+            publicationMarker.style.width = `${endPos - startPos}px`;
+        } else {
+            publicationMarker.style.left = `${calculatePosition(work.year)}px`;
+        }
+        
+        publicationMarker.style.backgroundColor = "black";
+        publicationMarker.style.top = `${level * 100 + 15 + (workIndex * 15)}px`;
+
+        const publicationLabel = document.createElement('span');
+        publicationLabel.className = 'publication-label';
+        
+        // Special handling for Conway's publication
+        if (philosopher.name === "Anne Conway") {
+            publicationLabel.style.left = 'auto';  // Remove the left: 100%
+            publicationLabel.style.right = '100%'; // Position to the left
+            publicationLabel.style.marginLeft = '0';
+            publicationLabel.style.marginRight = '5px';
+        }
+        
+        publicationLabel.textContent = work.extended ? 
+            `${work.title} (${work.year}-${work.endYear})` :
+            `${work.title} (${work.year})`;
+        
+        publicationMarker.addEventListener('click', () => {
+            publicationLabel.classList.toggle('hidden');
+        });
+
+        publicationMarker.appendChild(publicationLabel);
+        timeline.appendChild(publicationMarker);
+    });
+
+    timeline.appendChild(bar);
+    timeline.parentElement.style.height = `${(verticalLevels + 1) * 100 + 200}px`;
+});
+
+        // Set up button event listeners
+        const togglePublicationsButton = document.getElementById('togglePublications');
+        const showAllButton = document.getElementById('showAll');
+        const toggleBig7Button = document.getElementById('toggleBig7');
+        const toggleEngLangButton = document.getElementById('toggleEngLang');
+        const toggleNotPrecursorButton = document.getElementById('toggleNotPrecursor');
+        const toggleScienceButton = document.getElementById('toggleScience');
+        let labelsVisible = true;
+
+        togglePublicationsButton.addEventListener('click', () => {
+            labelsVisible = !labelsVisible;
+            const labels = document.querySelectorAll('.publication-label');
+            labels.forEach(label => {
+                if (labelsVisible) {
+                    label.classList.remove('hidden');
+                } else {
+                    label.classList.add('hidden');
+                }
+            });
+            togglePublicationsButton.textContent = labelsVisible ? ' Hide Publication Names ' : 'Show Publication Names';
+        });
+
+        // Function to handle button states
+        function setActiveButton(activeButton) {
+            [showAllButton, toggleBig7Button, toggleEngLangButton, toggleNotPrecursorButton, toggleScienceButton].forEach(button => {
+                button.classList.remove('active');
+            });
+            activeButton.classList.add('active');
+        }
+
+        showAllButton.addEventListener('click', () => {
+            showAllPhilosophers();
+            setActiveButton(showAllButton);
+        });
+
+        toggleBig7Button.addEventListener('click', () => {
+            togglePhilosopherGroup('Big7');
+            setActiveButton(toggleBig7Button);
+        });
+
+        toggleEngLangButton.addEventListener('click', () => {
+            togglePhilosopherGroup('EngLang');
+            setActiveButton(toggleEngLangButton);
+        });
+
+        toggleNotPrecursorButton.addEventListener('click', () => {
+            togglePhilosopherGroup('NotPrecursor');
+            setActiveButton(toggleNotPrecursorButton);
+        });
+
+        toggleScienceButton.addEventListener('click', () => {
+            togglePhilosopherGroup('Science');
+            setActiveButton(toggleScienceButton);
+        });
+
+        function isOverlapping(newBar, level) {
+            const existingBars = timeline.querySelectorAll('.lifespan-bar');
+            const newLeft = parseFloat(newBar.style.left);
+            const newRight = newLeft + parseFloat(newBar.style.width);
+
+            for (let existingBar of existingBars) {
+                if (parseFloat(existingBar.style.top) / 100 === level) {
+                    const existingLeft = parseFloat(existingBar.style.left);
+                    const existingRight = existingLeft + parseFloat(existingBar.style.width);
+
+                    if (!(newRight < existingLeft - 100 || newLeft > existingRight + 100)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+    </script>
